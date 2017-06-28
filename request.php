@@ -73,14 +73,34 @@ for($i=1;$i<$max_cluster_count;$i++){
 if($limit !== null) $select->bindParam(':lim', $limit, PDO::PARAM_INT); // BIND LIMIT VAL
 if($offset !== null) $select->bindParam(':offset', $offset, PDO::PARAM_INT); // BIND OFFSET VAL
 
+// SET NEXT & LAST LINKS
+if($limit !== null) {
+    if($offset === null) $next = preg_replace('/limit=[0-9]+/', 'limit='.$limit.'&offset='.$limit, $_SERVER[REQUEST_URI]);
+    else {
+        $lim_offset_diff = $offset - $limit;
+        if($lim_offset_diff == 0) $last = preg_replace('/&offset=[0-9]+/', '', $_SERVER[REQUEST_URI]);
+        if ($lim_offset_diff > 0) $last = preg_replace('/offset=[0-9]+/', 'offset='.($offset-$limit), $_SERVER[REQUEST_URI]);
+        $next = preg_replace('/offset=[0-9]+/', 'offset='.($offset+$limit), $_SERVER[REQUEST_URI]);
+    }
+}
+
 // EXECUTION + DATA RETRIEVAL
 try{
     $select->execute();
     $result = $select->fetchAll(\PDO::FETCH_OBJ);
 
+    $output = array('meta' => array(
+        'count' => sizeof($result),
+        'self' => 'http://'.$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI]
+    ),
+    'data' => $result);
+
+    if($next !== null) $output['meta']['next'] = 'http://'.$_SERVER[HTTP_HOST].$next;
+    if($last !== null) $output['meta']['last'] = 'http://'.$_SERVER[HTTP_HOST].$last;
+
     // FORMAT OUTPUT
     header('Content-Type: application/json');
-    print(json_encode($result));
+    print(json_encode($output));
 }catch(\PDOException $ex){
     print($ex->getMessage());
     echo "\n";
