@@ -21,7 +21,7 @@ $cluster_count = sizeof($colors);
 $limit = ($_GET['limit'] === null) ? null : intval($_GET['limit']); // DEFINE LIMIT
 $offset = ($_GET['offset'] === null) ? null : intval($_GET['offset']); // DEFINE OFFSET
 
-$select_str = 'SELECT items_colors.item_id, items.link, items.img_url, items.price, items.category_id, items.serial_number, items_colors.rank,
+$select_str = 'SELECT items_colors.item_id, items.link, items.img_url, items.price, items.category_id, items.serial_number,
     CONCAT(items.R1, \', \', items.G1, \', \', items.B1, \', \', items.P1) as color1, 
     CONCAT(items.R2, \', \', items.G2, \', \', items.B2, \', \', items.P2) as color2, 
     CONCAT(items.R3, \', \', items.G3, \', \', items.B3, \', \', items.P3) as color3, 
@@ -30,7 +30,7 @@ $select_str = 'SELECT items_colors.item_id, items.link, items.img_url, items.pri
 // ADD COLOR CLUSTERS TO QRY
 for($i=1;$i<=$max_cluster_count;$i++){
     if(array_key_exists($i, $colors)){
-        $select_str .= ', SQRT(POW(items_colors.R-:R'.$i.', 2)+POW(items_colors.G-:G'.$i.',2)+POW(items_colors.B-:B'.$i.',2)) as distance'.$i;
+        $select_str .= ', MIN(SQRT(POW(items_colors.R-:R'.$i.', 2) + POW(items_colors.G-:G'.$i.', 2) + POW(items_colors.B-:B'.$i.', 2))) AS `distance'.$i.'`';
     }
 }
 
@@ -38,14 +38,14 @@ $select_str .= ' FROM items_colors INNER JOIN items ON items.id = items_colors.i
 
 // ORDER WITH COLOR CLUSTERS
 if($cluster_count == 1){
-    $select_str .= ' ORDER BY distance1, items_colors.P DESC, items_colors.item_id'; 
+    $select_str .= ' GROUP BY items_colors.item_id ORDER BY distance1, items_colors.item_id'; 
 }elseif($cluster_count > 1){
-    $select_str .= ' ORDER BY SQRT(';
-    for($i=1;$i<$cluster_count;$i++){
-        $select_str .= 'POW(distance'.$i.', 2)';
-        if($i < $cluster_count-1) $select_str .= ' + ';
-    }
-    $select_str .= '), items_colors.item_id';
+    // $select_str .= ' ORDER BY SQRT(';
+    // for($i=1;$i<$cluster_count;$i++){
+    //     $select_str .= 'POW(distance'.$i.', 2)';
+    //     if($i < $cluster_count-1) $select_str .= ' + ';
+    // }
+    // $select_str .= '), items_colors.item_id';
 }
 
 
@@ -84,8 +84,12 @@ try{
     $select->execute();
     $result = $select->fetchAll(\PDO::FETCH_OBJ);
 
+    $offset = ($offset === null) ? 0 : $offset;
+
     $output = array('meta' => array(
         'count' => sizeof($result),
+        'limit' => $limit,
+        'offset' => $offset,
         'self' => 'http://'.$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI]
     ),
     'data' => $result);
