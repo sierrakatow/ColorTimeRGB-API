@@ -20,7 +20,7 @@ $select_str = 'SELECT items.id, items.link, items.img_url, items.price, items.ca
     CONCAT(items.R2, \', \', items.G2, \', \', items.B2, \', \', items.P2) as color2, 
     CONCAT(items.R3, \', \', items.G3, \', \', items.B3, \', \', items.P3) as color3, 
     CONCAT(items.R4, \', \', items.G4, \', \', items.B4, \', \', items.P4) as color4
-    FROM items_copy 
+    FROM item_copy 
     WHERE `R1` = :R1 
     AND `G1` = :G1 
     AND `B1` = :B1';
