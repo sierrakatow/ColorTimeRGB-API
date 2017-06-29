@@ -40,7 +40,7 @@ $pattern = ($_GET['pattern'] === null) ? null : intval($_GET['pattern']);
 $category = ($_GET['category'] === null) ? null : intval($_GET['category']);
 $pattern = ($_GET['pattern'] === null) ? null : strtolower($_GET['pattern']);
 
-$limit = ($_GET['limit'] === null) ? null : intval($_GET['limit']); // DEFINE LIMIT
+$limit = ($_GET['limit'] === null) ? 1000 : intval($_GET['limit']); // DEFINE LIMIT
 $offset = ($_GET['offset'] === null) ? null : intval($_GET['offset']); // DEFINE OFFSET
 
 
