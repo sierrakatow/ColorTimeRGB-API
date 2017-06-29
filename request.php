@@ -9,7 +9,8 @@ if($_GET['color1'] === null && $_GET['colorscheme'] === null && $_GET['pattern']
     header('Content-Type: application/json');
     $output = array(
         'error': 'Parameter requirements not met.'
-    )
+    );
+    print($output);
 }
 if($_GET['color1'] !== null) {
     $color1 = explode(',', $_GET['color1']);
