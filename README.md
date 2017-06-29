@@ -1,6 +1,5 @@
 **ColorTimeRGB API**
 ----
-  <_Additional information about your API call. Try to use verbs that match both request type (fetching vs modifying) and plurality (one vs multiple)._>
 
 * **URL**
 
@@ -27,7 +26,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{ meta : { count : 200, ... }, data : [...] }
+    **Content:** `{ meta : { count : 200, ... }, data : [...] }`
  
 * **Error Response:**
 
