@@ -8,10 +8,12 @@ $threshold = 80;
 if($_GET['color1'] === null && $_GET['colorscheme'] === null && $_GET['pattern'] === null && $_GET['limit'] === null){
     header('Content-Type: application/json');
     $output = array(
-        'error': 'Parameter requirements not met.'
+        'error'=> 'Parameter requirements not met.'
     );
-    print($output);
+    print(json_encode($output));
+    exit();
 }
+
 if($_GET['color1'] !== null) {
     $color1 = explode(',', $_GET['color1']);
     // get integer from color cluster GET var
