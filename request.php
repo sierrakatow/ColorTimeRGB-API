@@ -6,6 +6,7 @@ $threshold = 80;
 
 // CHECK PARAMETERS
 if($_GET['color1'] === null && $_GET['colorscheme'] === null && $_GET['pattern'] === null && $_GET['limit'] === null){
+    header("HTTP/1.1 422 OK");
     header('Content-Type: application/json');
     $output = array(
         'error'=> 'Parameter requirements not met.'
@@ -213,6 +214,7 @@ try{
     if($last !== null) $output['meta']['last'] = 'http://'.$_SERVER[HTTP_HOST].$last;
 
     // FORMAT OUTPUT
+    header("HTTP/1.1 200 OK");
     header('Content-Type: application/json');
     print(json_encode($output));
 
