@@ -24,30 +24,23 @@ if($_GET['color1'] !== null) {
     $pmax = ($_GET['pmax'] === null) ? null : intval($_GET['pmax']);
     
 }elseif($_GET['colorscheme'] !== null){
-    $colorscheme = intval($_GET['colorscheme']);
+    $colorscheme = strtolower($_GET['colorscheme']);
 }
 
-$category = ($_GET['category'] === null) ? null : intval($_GET['category']);
 $pattern = ($_GET['pattern'] === null) ? null : intval($_GET['pattern']);
+$category = ($_GET['category'] === null) ? null : intval($_GET['category']);
+$pattern = ($_GET['pattern'] === null) ? null : strtolower($_GET['pattern']);
 
 $limit = ($_GET['limit'] === null) ? null : intval($_GET['limit']); // DEFINE LIMIT
 $offset = ($_GET['offset'] === null) ? null : intval($_GET['offset']); // DEFINE OFFSET
 
 
 if($color1 !== null){
-    $select_str = 'SELECT ic.item_id, items.link, items.img_url, items.price, items.category_id, items.serial_number,
-        items.R1, items.G1, items.B1, items.P1,
-        items.R2, items.G2, items.B2, items.P2,
-        items.R3, items.G3, items.B3, items.P3,
-        items.R4, items.G4, items.B4, items.P4';
+    $select_str = 'SELECT items.*';
     if($color2 === null) $select_str .= ', ic.rank AS `closest_to`';
     else $select_str .= ', ic.rank1 AS `closest_to[1]`, ic.rank2 AS `closest_to[2]`';
 }else{
-    $select_str = 'SELECT id as `item_id`, link, img_url, price, category_id, serial_number, 
-        R1, G1, B1, P1, 
-        R2, G2, B2, P2, 
-        R3, G3, B3, P3, 
-        R4, G4, B4, P4
+    $select_str = 'SELECT *
     FROM items';
 }
 
@@ -87,8 +80,6 @@ if($category !== null || $pmin !== null || $pmax !== null || $colorscheme !== nu
     $select_str .= ' WHERE';
 }
 
-
-
 // FILTER
 if($category !== null) {
     if($color1 === null) $select_str .= ' category_id = :category';
@@ -103,17 +94,37 @@ if($pmax !== null){
     $select_str .= ' ic.P <= :pmax';
 }
 
+if($colorscheme !== null){
+    $select_str .= ' '.$colorscheme.' >= \'1\'';
+}
+
+if($pattern !== null){
+    if($color1 === null) $select_str .= ' '.$pattern.' >= \'1\'';
+    else $select_str .= ' items.'.$pattern.' >= \'1\'';
+}
+
+// HAVING THRESHOLD (COLOR DISTANCE)
+if($color1 !== null) {
+    $select_str .= ' HAVING distance < :threshold ';
+}
+
 // ORDER WITH COLOR CLUSTERS
 if($color1 !== null){
+    $select_str .= ' ORDER BY distance, ';
     if($color2 === null) { 
     // Single Color
-        $select_str .= ' HAVING distance < \''.$threshold.'\' ORDER BY distance, ic.P DESC, ic.item_id'; 
+        $select_str .= 'ic.P DESC';
     }else{
     // Double Color
-        $select_str .= ' HAVING distance < \''.$threshold.'\' ORDER BY distance, ic.P1 DESC, ic.item_id'; 
+        $select_str .= 'ic.P1 DESC';
     }  
+    if($pattern !== null) $select_str .= ', items.'.$pattern.' DESC';
+    $select_str .= ', items.id'; 
 }else{
-    $select_str .= ' ORDER BY item_id';
+    $select_str .= ' ORDER BY ';
+    if($colorscheme !== null) $select_str .= $colorscheme.' DESC,';
+    if($pattern !== null) $select_str .= $pattern.' DESC,';
+    $select_str .= 'id';
 }
 
 
@@ -142,6 +153,9 @@ if($color1 !== null){
     // Percentage
     if($pmin !== null) $select->bindParam(':pmin', $pmin);
     if($pmax !== null) $select->bindParam(':pmax', $pmax);
+
+    // Threshold
+    $select->bindParam(':threshold', $threshold, PDO::PARAM_INT);
 }
 
 if($category !== null) $select->bindParam(':category', $category, PDO::PARAM_INT); // BIND CATEGORY ID
