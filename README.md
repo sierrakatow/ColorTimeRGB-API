@@ -4,25 +4,21 @@
 
 * **URL**
 
-  <_The URL Structure (path only, no root url)_>
+  ``/request.php?``
 
 * **Method:**
-  
-  <_The request type_>
 
-  `GET` | `POST` | `DELETE` | `PUT`
+  `GET`
   
 *  **URL Params**
-
-   <_If URL params exist, specify them in accordance with name mentioned in URL section. Separate into optional and required. Document data constraints._> 
-
-   **Required:**
  
-   `id=[integer]`
+   `color1=[R],[G],[B],[P]` OR `colorscheme=[pastel|rainbow|american|fire|grayscale|earth]`
 
    **Optional:**
  
-   `photo_id=[alphanumeric]`
+    `color2=[R],[G],[B],[P]`
+    `pmin=[0-100]`
+    `pmax=[0-100]`
 
 * **Data Params**
 
@@ -33,7 +29,7 @@
   <_What should the status code be on success and is there any returned data? This is useful when people need to to know what their callbacks should expect!_>
 
   * **Code:** 200 <br />
-    **Content:** `{ id : 12 }`
+    **Content:** `{ meta : { count : 200, ... }, data : [...] }
  
 * **Error Response:**
 
@@ -53,4 +49,4 @@
 
 * **Notes:**
 
-  <_This is where all uncertainties, commentary, discussion etc. can go. I recommend timestamping and identifying oneself when leaving comments here._> 
+    

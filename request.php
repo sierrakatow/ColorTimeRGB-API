@@ -5,6 +5,12 @@ $max_cluster_count = 4;
 $threshold = 80;
 
 // CHECK PARAMETERS
+if($_GET['color1'] === null && $_GET['colorscheme'] === null && $_GET['pattern'] === null && $_GET['limit'] === null){
+    header('Content-Type: application/json');
+    $output = array(
+        'error': 'Parameter requirements not met.'
+    )
+}
 if($_GET['color1'] !== null) {
     $color1 = explode(',', $_GET['color1']);
     // get integer from color cluster GET var
@@ -37,8 +43,8 @@ $offset = ($_GET['offset'] === null) ? null : intval($_GET['offset']); // DEFINE
 
 if($color1 !== null){
     $select_str = 'SELECT items.*';
-    if($color2 === null) $select_str .= ', ic.rank AS `closest_to`';
-    else $select_str .= ', ic.rank1 AS `closest_to[1]`, ic.rank2 AS `closest_to[2]`';
+    // if($color2 === null) $select_str .= ', ic.rank AS `closest_to`';
+    // else $select_str .= ', ic.rank1 AS `closest_to[1]`, ic.rank2 AS `closest_to[2]`';
 }else{
     $select_str = 'SELECT *
     FROM items';
@@ -206,7 +212,9 @@ try{
     // FORMAT OUTPUT
     header('Content-Type: application/json');
     print(json_encode($output));
+
 }catch(\PDOException $ex){
+    // ERROR
     print($ex->getMessage());
     echo "\n";
 }
