@@ -34,7 +34,7 @@ $limit = ($_GET['limit'] === null) ? null : intval($_GET['limit']); // DEFINE LI
 $offset = ($_GET['offset'] === null) ? null : intval($_GET['offset']); // DEFINE OFFSET
 
 
-if($colors1 !== null){
+if($color1 !== null){
     $select_str = 'SELECT ic.item_id, items.link, items.img_url, items.price, items.category_id, items.serial_number,
         items.R1, items.G1, items.B1, items.P1,
         items.R2, items.G2, items.B2, items.P2,
