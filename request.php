@@ -12,7 +12,7 @@ if($_GET['color1'] !== null) {
         $color1[$j] = intval($c);
     }
 
-    if($_GET['colors2'] !== null){
+    if($_GET['color2'] !== null){
         $color2 = explode(',', $_GET['color2']);
         // get integer from color cluster GET var
         foreach($color2 as $j => $c){
@@ -40,6 +40,8 @@ if($color1 !== null){
         items.R2, items.G2, items.B2, items.P2,
         items.R3, items.G3, items.B3, items.P3,
         items.R4, items.G4, items.B4, items.P4';
+    if($color2 === null) $select_str .= ', ic.rank AS `closest_to`';
+    else $select_str .= ', ic.rank1 AS `closest_to[1]`, ic.rank2 AS `closest_to[2]`';
 }else{
     $select_str = 'SELECT id as `item_id`, link, img_url, price, category_id, serial_number, 
         R1, G1, B1, P1, 
@@ -54,12 +56,17 @@ if($color1 !== null){
     if($color2 === null) {
         // Single Color
         $select_str .= ', SQRT(POW(ic.R-:R1, 2) + 
-                                    POW(ic.G-:G1, 2) + 
-                                    POW(ic.B-:B1, 2))
+                                POW(ic.G-:G1, 2) + 
+                                POW(ic.B-:B1, 2))
                         AS `distance`';
     }else{
         // Double Color
-        $select_str .= ', SQRT(';
+        $select_str .= ', SQRT(POW(SQRT(POW(ic.R1-:R1, 2) + 
+                                POW(ic.G1-:G1, 2) + 
+                                POW(ic.B1-:B1, 2)), 2) +
+                            POW(SQRT(POW(ic.R2-:R2, 2) + 
+                                POW(ic.G2-:G2, 2) + 
+                                POW(ic.B2-:B2, 2)), 2)) AS `distance`';
     }
 }
 
@@ -103,8 +110,8 @@ if($color1 !== null){
         $select_str .= ' HAVING distance < \''.$threshold.'\' ORDER BY distance, ic.P DESC, ic.item_id'; 
     }else{
     // Double Color
-
-    }
+        $select_str .= ' HAVING distance < \''.$threshold.'\' ORDER BY distance, ic.P1 DESC, ic.item_id'; 
+    }  
 }else{
     $select_str .= ' ORDER BY item_id';
 }
