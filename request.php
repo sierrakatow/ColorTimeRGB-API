@@ -28,6 +28,8 @@ if($_GET['color1'] !== null) {
         foreach($color2 as $j => $c){
             $color2[$j] = intval($c);
         }
+
+        $threshold = 150; // loosen threshold for 2 colors
     }
     // percentage filters only present if color1 exists
     $pmin = ($_GET['pmin'] === null) ? null : intval($_GET['pmin']);
@@ -36,10 +38,10 @@ if($_GET['color1'] !== null) {
 }elseif($_GET['colorscheme'] !== null){
     $colorscheme = strtolower($_GET['colorscheme']);
 }
-
-$pattern = ($_GET['pattern'] === null) ? null : intval($_GET['pattern']);
 $category = ($_GET['category'] === null) ? null : intval($_GET['category']);
 $pattern = ($_GET['pattern'] === null) ? null : strtolower($_GET['pattern']);
+
+if($pattern == 'dotted' || $pattern == 'stripes') $threshold = 150; // loosen threshold
 
 $limit = ($_GET['limit'] === null) ? 1000 : intval($_GET['limit']); // DEFINE LIMIT
 $offset = ($_GET['offset'] === null) ? null : intval($_GET['offset']); // DEFINE OFFSET
@@ -96,12 +98,14 @@ if($category !== null) {
     else $select_str .= ' items.category_id = :category';
 }
 
+$double_color_percent = ($color2 === null) ? '' : '1';
+
 if($pmin !== null){
-    $select_str .= ' ic.P >= :pmin';
+    $select_str .= ' ic.P'.$double_color_percent.' >= :pmin';
 }
 
 if($pmax !== null){
-    $select_str .= ' ic.P <= :pmax';
+    $select_str .= ' ic.P'.$double_color_percent.' <= :pmax';
 }
 
 if($colorscheme !== null){
@@ -120,14 +124,7 @@ if($color1 !== null) {
 
 // ORDER WITH COLOR CLUSTERS
 if($color1 !== null){
-    $select_str .= ' ORDER BY distance, ';
-    if($color2 === null) { 
-    // Single Color
-        $select_str .= 'ic.P DESC';
-    }else{
-    // Double Color
-        $select_str .= 'ic.P1 DESC';
-    }  
+    $select_str .= ' ORDER BY distance, ic.P'.$double_color_percent.' DESC'; 
     if($pattern !== null) $select_str .= ', items.'.$pattern.' DESC';
     $select_str .= ', items.id'; 
 }else{
