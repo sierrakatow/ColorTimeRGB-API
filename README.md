@@ -20,7 +20,8 @@
     `pmax1=[0-100]`
     `pmin2=[0-100]`
     `pmax2=[0-100]`
-
+    `pattern=[dotted|stripes]`
+    
 * **Data Params**
 
 * **Success Response:**
