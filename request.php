@@ -96,7 +96,8 @@ if($color1 !== null) {
 if($color1 !== null) $select_str .= ' INNER JOIN items ON items.id = ic.item_id';
 
 // ADD WHERE
-if($category !== null || $pmin1 !== null || $pmax1 !== null || $pmin2 !== null || $pmax2 !== null || $colorscheme !== null || $pattern !== null){
+if($category !== null || $pmin1 !== null || $pmax1 !== null || $pmin2 !== null 
+    || $pmax2 !== null || $colorscheme !== null || $pattern !== null){
     $select_str .= ' WHERE';
 }
 

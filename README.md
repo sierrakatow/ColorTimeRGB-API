@@ -16,12 +16,12 @@
    **Optional:**
  
     `color2=[R],[G],[B],[P]`
-    `pmin=[0-100]`
-    `pmax=[0-100]`
+    `pmin1=[0-100]`
+    `pmax1=[0-100]`
+    `pmin2=[0-100]`
+    `pmax2=[0-100]`
 
 * **Data Params**
-
-
 
 * **Success Response:**
 
