@@ -9,6 +9,9 @@ $r_coeff = 2;
 $g_coeff = 4;
 $b_coeff = 3;
 
+// TIME
+$start = microtime(true);
+
 // CHECK PARAMETERS
 if($_GET['color1'] === null && $_GET['colorscheme'] === null && $_GET['pattern'] === null && $_GET['limit'] === null){
     header("HTTP/1.1 422 OK");
@@ -57,8 +60,6 @@ $offset = ($_GET['offset'] === null) ? null : intval($_GET['offset']); // DEFINE
 
 if($color1 !== null){
     $select_str = 'SELECT items.*';
-    // if($color2 === null) $select_str .= ', ic.rank AS `closest_to`';
-    // else $select_str .= ', ic.rank1 AS `closest_to[1]`, ic.rank2 AS `closest_to[2]`';
 }else{
     $select_str = 'SELECT *
     FROM items';
@@ -168,7 +169,6 @@ if($color1 !== null){
 if($limit !== null) $select_str .= ' LIMIT :lim'; // ADD LIMIT TO QRY
 if($offset !== null) $select_str .= ' OFFSET :offset'; // ADD OFFSET TO QRY
 
-// print $select_str;
 
 $select = $pdo->prepare($select_str);
 
@@ -230,11 +230,14 @@ try{
 
     $offset = ($offset === null) ? 0 : $offset;
 
+    $time_elapsed = round(microtime(true) - $start, 3); 
+
     $output = array('meta' => array(
         'count' => sizeof($result),
         'limit' => $limit,
         'offset' => $offset,
-        'self' => 'http://'.$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI]
+        'self' => 'http://'.$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI],
+        'time_elapsed' => $time_elapsed
     ),
     'data' => $result);
 
