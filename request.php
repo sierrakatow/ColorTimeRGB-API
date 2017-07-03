@@ -4,6 +4,11 @@ include('./connection.php');
 $max_cluster_count = 4;
 $threshold = 80;
 
+// COEFFICIENTS
+$r_coeff = 2;
+$g_coeff = 4;
+$b_coeff = 3;
+
 // CHECK PARAMETERS
 if($_GET['color1'] === null && $_GET['colorscheme'] === null && $_GET['pattern'] === null && $_GET['limit'] === null){
     header("HTTP/1.1 422 OK");
@@ -30,10 +35,13 @@ if($_GET['color1'] !== null) {
         }
 
         $threshold = 150; // loosen threshold for 2 colors
+
+        $pmin2 = ($_GET['pmin2'] === null) ? null : intval($_GET['pmin2']);
+        $pmax2 = ($_GET['pmax2'] === null) ? null : intval($_GET['pmax2']);
     }
     // percentage filters only present if color1 exists
-    $pmin = ($_GET['pmin'] === null) ? null : intval($_GET['pmin']);
-    $pmax = ($_GET['pmax'] === null) ? null : intval($_GET['pmax']);
+    $pmin1 = ($_GET['pmin1'] === null) ? null : intval($_GET['pmin1']);
+    $pmax1 = ($_GET['pmax1'] === null) ? null : intval($_GET['pmax1']);
     
 }elseif($_GET['colorscheme'] !== null){
     $colorscheme = strtolower($_GET['colorscheme']);
@@ -60,18 +68,18 @@ if($color1 !== null){
 if($color1 !== null){
     if($color2 === null) {
         // Single Color
-        $select_str .= ', SQRT(POW(ic.R-:R1, 2) + 
-                                POW(ic.G-:G1, 2) + 
-                                POW(ic.B-:B1, 2))
+        $select_str .= ', SQRT('.$r_coeff.'*POW(ic.R-:R1, 2) + 
+                                '.$g_coeff.'*POW(ic.G-:G1, 2) + 
+                                '.$b_coeff.'*POW(ic.B-:B1, 2))
                         AS `distance`';
     }else{
         // Double Color
-        $select_str .= ', SQRT(POW(SQRT(POW(ic.R1-:R1, 2) + 
-                                POW(ic.G1-:G1, 2) + 
-                                POW(ic.B1-:B1, 2)), 2) +
-                            POW(SQRT(POW(ic.R2-:R2, 2) + 
-                                POW(ic.G2-:G2, 2) + 
-                                POW(ic.B2-:B2, 2)), 2)) AS `distance`';
+        $select_str .= ', SQRT(POW(SQRT('.$r_coeff.'*POW(ic.R1-:R1, 2) + 
+                                '.$g_coeff.'*POW(ic.G1-:G1, 2) + 
+                                '.$b_coeff.'*POW(ic.B1-:B1, 2)), 2) +
+                            POW(SQRT('.$r_coeff.'*POW(ic.R2-:R2, 2) + 
+                                '.$g_coeff.'*POW(ic.G2-:G2, 2) + 
+                                '.$b_coeff.'*POW(ic.B2-:B2, 2)), 2)) AS `distance`';
     }
 }
 
@@ -88,34 +96,53 @@ if($color1 !== null) {
 if($color1 !== null) $select_str .= ' INNER JOIN items ON items.id = ic.item_id';
 
 // ADD WHERE
-if($category !== null || $pmin !== null || $pmax !== null || $colorscheme !== null || $pattern !== null){
+if($category !== null || $pmin1 !== null || $pmax1 !== null || $pmin2 !== null || $pmax2 !== null || $colorscheme !== null || $pattern !== null){
     $select_str .= ' WHERE';
 }
 
-// FILTER
+// FILTER BY CATEGORY
 if($category !== null) {
-    if($color1 === null) $select_str .= ' category_id = :category';
-    else $select_str .= ' items.category_id = :category';
+    if($color1 === null) $select_str .= ' category_id = :category AND ';
+    else $select_str .= ' items.category_id = :category AND ';
 }
 
-$double_color_percent = ($color2 === null) ? '' : '1';
 
-if($pmin !== null){
-    $select_str .= ' ic.P'.$double_color_percent.' >= :pmin';
-}
 
-if($pmax !== null){
-    $select_str .= ' ic.P'.$double_color_percent.' <= :pmax';
+// FILTER BY PERCENTAGE(S)
+if($color2 === null){
+    // SINGLE COLOR
+    if($pmin1 !== null){
+        $select_str .= ' ic.P >= :pmin1 AND ';
+    }
+
+    if($pmax1 !== null){
+        $select_str .= ' ic.P <= :pmax1 AND ';
+    }
+}else{
+    // TWO COLORS
+    if($pmin1 !== null){
+        $select_str .= ' ic.P1 >= :pmin1 AND ';
+    }elseif($pmax1 !== null){
+        $select_str .= ' ic.P1 <= :pmax1 AND ';
+    }
+
+    if($pmin2 !== null){
+        $select_str .= ' ic.P2 >= :pmin2 AND ';
+    }elseif($pmax2 !== null){
+        $select_str .= ' ic.P2 <= :pmax2 AND ';
+    }
 }
 
 if($colorscheme !== null){
-    $select_str .= ' '.$colorscheme.' >= \'1\'';
+    $select_str .= ' '.$colorscheme.' >= \'1\' AND ';
 }
 
 if($pattern !== null){
-    if($color1 === null) $select_str .= ' '.$pattern.' >= \'1\'';
-    else $select_str .= ' items.'.$pattern.' >= \'1\'';
+    if($color1 === null) $select_str .= ' '.$pattern.' >= \'1\' AND ';
+    else $select_str .= ' items.'.$pattern.' >= \'1\' AND ';
 }
+
+$select_str .= '\'1\' = \'1\''; // Neutralizes 'AND's
 
 // HAVING THRESHOLD (COLOR DISTANCE)
 if($color1 !== null) {
@@ -124,6 +151,7 @@ if($color1 !== null) {
 
 // ORDER WITH COLOR CLUSTERS
 if($color1 !== null){
+    $double_color_percent = ($color2 === null) ? '' : '1';
     $select_str .= ' ORDER BY distance, ic.P'.$double_color_percent.' DESC'; 
     if($pattern !== null) $select_str .= ', items.'.$pattern.' DESC';
     $select_str .= ', items.id'; 
@@ -158,8 +186,10 @@ if($color1 !== null){
     }
 
     // Percentage
-    if($pmin !== null) $select->bindParam(':pmin', $pmin);
-    if($pmax !== null) $select->bindParam(':pmax', $pmax);
+    if($pmin1 !== null) $select->bindParam(':pmin1', $pmin1);
+    if($pmax1 !== null) $select->bindParam(':pmax1', $pmax1);
+    if($pmin2 !== null) $select->bindParam(':pmin2', $pmin2);
+    if($pmax2 !== null) $select->bindParam(':pmax2', $pmax2);
 
     // Threshold
     $select->bindParam(':threshold', $threshold, PDO::PARAM_INT);
@@ -216,7 +246,7 @@ try{
     print(json_encode($output));
 
 }catch(\PDOException $ex){
-    // ERROR
+    // ERROR OUTPUT
     print($ex->getMessage());
     echo "\n";
 }
