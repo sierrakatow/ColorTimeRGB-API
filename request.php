@@ -100,6 +100,7 @@ if($color1 !== null) $select_str .= ' INNER JOIN items ON items.id = ic.item_id'
 if($category !== null || $pmin1 !== null || $pmax1 !== null || $pmin2 !== null 
     || $pmax2 !== null || $colorscheme !== null || $pattern !== null){
     $select_str .= ' WHERE';
+    $where = true;
 }
 
 // FILTER BY CATEGORY
@@ -144,7 +145,7 @@ if($pattern !== null){
     else $select_str .= ' items.'.$pattern.' >= \'1\' AND ';
 }
 
-$select_str .= '\'1\' = \'1\''; // Neutralizes 'AND's
+if($where !== null) $select_str .= '\'1\' = \'1\''; // Neutralizes 'AND's
 
 // HAVING THRESHOLD (COLOR DISTANCE)
 if($color1 !== null) {
