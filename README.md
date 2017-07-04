@@ -21,7 +21,7 @@
     `pmin2=[0-100]`
     `pmax2=[0-100]`
     `pattern=[dotted|stripes]`
-    
+
 * **Data Params**
 
 * **Success Response:**
@@ -34,3 +34,11 @@
   * **Code:** 422 UNPROCESSABLE ENTRY <br />
     **Content:** `{ error : "Parameter requirements not met." }`
     
+* **Making Changes:**
+
+  * `git status` - see files that have been changed since last commit
+  * `git add .` OR `git add [filename]` - add all files in the current folder that are modified/new
+  * `git reset [filename]` - undo a git add
+  * `git commit -m "SOME MESSAGE HERE"` - commit added files, staged for upload
+  * `git push origin master` - push changes to github
+  * `eb deploy --staged` - push changes lives to AWS
