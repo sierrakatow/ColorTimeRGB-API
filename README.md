@@ -34,7 +34,7 @@
   * **Code:** 422 UNPROCESSABLE ENTRY <br />
     **Content:** `{ error : "Parameter requirements not met." }`
     
-* **Making Changes:**
+* **Making Changes to the API:**
 
   * `git status` - see files that have been changed since last commit
   * `git add .` - add all files that've been changed in the current folder
