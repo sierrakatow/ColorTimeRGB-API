@@ -30,6 +30,10 @@ if($_GET['color1'] !== null) {
         $color1[$j] = intval($c);
     }
 
+    // percentage filters only present if color1 exists
+    $pmin1 = ($_GET['pmin1'] === null) ? null : intval($_GET['pmin1']);
+    $pmax1 = ($_GET['pmax1'] === null) ? null : intval($_GET['pmax1']);
+
     if($_GET['color2'] !== null){
         $color2 = explode(',', $_GET['color2']);
         // get integer from color cluster GET var
@@ -42,9 +46,6 @@ if($_GET['color1'] !== null) {
         $pmin2 = ($_GET['pmin2'] === null) ? null : intval($_GET['pmin2']);
         $pmax2 = ($_GET['pmax2'] === null) ? null : intval($_GET['pmax2']);
     }
-    // percentage filters only present if color1 exists
-    $pmin1 = ($_GET['pmin1'] === null) ? null : intval($_GET['pmin1']);
-    $pmax1 = ($_GET['pmax1'] === null) ? null : intval($_GET['pmax1']);
     
 }elseif($_GET['colorscheme'] !== null){
     $colorscheme = strtolower($_GET['colorscheme']);

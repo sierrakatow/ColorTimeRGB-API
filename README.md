@@ -43,3 +43,8 @@
   * `git commit -m "SOME MESSAGE HERE"` - commit added files, staged for upload
   * `git push origin master` - push changes to github
   * `eb deploy --staged` - push changes lives to AWS
+
+* **Useful MySQL Queries:**
+
+  * `DELETE FROM items WHERE category_id = '[SOME CATEGORY]'` - deletes all rows in items that fit that category (corresponding rows in items_colors and items\_colors2 are also deleted)
+  * `TRUNCATE TABLE [tablename]` - completely empty and reset a table
