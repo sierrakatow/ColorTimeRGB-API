@@ -237,8 +237,8 @@ try{
         'count' => sizeof($result),
         'limit' => $limit,
         'offset' => $offset,
-        'self' => 'http://'.$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI],
-        'time_elapsedX' => $time_elapsed
+        'time_elapsed' => $time_elapsed,
+        'self' => 'http://'.$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI]
     ),
     'data' => $result);
 
