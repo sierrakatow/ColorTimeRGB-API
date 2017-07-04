@@ -37,7 +37,8 @@
 * **Making Changes:**
 
   * `git status` - see files that have been changed since last commit
-  * `git add .` OR `git add [filename]` - add all files in the current folder that are modified/new
+  * `git add .` - add all files that've been changed in the current folder
+  * `git add [filename]` - add specific file that's been changed
   * `git reset [filename]` - undo a git add
   * `git commit -m "SOME MESSAGE HERE"` - commit added files, staged for upload
   * `git push origin master` - push changes to github
