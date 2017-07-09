@@ -257,6 +257,7 @@ try{
         'limit' => $limit,
         'offset' => $offset,
         'time_elapsed' => $time_elapsed,
+        'top_green' => $top_green,
         'self' => 'http://'.$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI]
     ),
     'data' => $result);
