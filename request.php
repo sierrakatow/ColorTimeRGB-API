@@ -124,10 +124,9 @@ if($color2 === null){
         $select_str .= ' ic.P <= :pmax1 AND ';
     }
     
-    $top_red=min(':R1'+$color_threshold,255);
-    $bot_red=max(0,':R1'-$color_threshold);
-    $select_str .= ' ic.R <= '.$top_red.' AND ';
-    $select_str .= ' ic.R >= '.$bot_red.' AND ';
+ 
+    $select_str .= ' ic.R <= (:R1+'.$color_threshold.') AND ';
+    $select_str .= ' ic.R >= (:R1-'.$color_threshold.') AND ';
     
 
     $select_str .= ' ic.G <= (:G1+'.$color_threshold.') AND ';
