@@ -132,10 +132,8 @@ if($color2 === null){
     $select_str .= ' ic.G <= (:G1+'.$color_threshold.') AND ';
     $select_str .= ' ic.G >= (:G1-'.$color_threshold.') AND ';
     
-  //  $top_blue=min(':B1'+$color_threshold,255);
-   // $bottom_blue=max(0,':B1'-$color_threshold);
-   // $select_str .= ' ic.B <= '+$top_blue+' AND ';
-   // $select_str .= ' ic.B >= '+$bottom_blue+' AND ';
+    $select_str .= ' ic.B <= (:B1+'.$color_threshold.') AND ';
+    $select_str .= ' ic.B >= (:B1-'.$color_threshold.') AND ';
     
     
 }else{
