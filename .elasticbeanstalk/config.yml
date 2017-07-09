@@ -1,0 +1,19 @@
+branch-defaults:
+  master:
+    environment: Sample-env
+environment-defaults:
+  Sample-env:
+    branch: null
+    repository: null
+global:
+  application_name: ColorTimeRGB API
+  default_ec2_keyname: null
+  default_platform: arn:aws:elasticbeanstalk:us-east-2::platform/PHP 7.0 running on
+    64bit Amazon Linux/2.4.0
+  default_region: us-east-2
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: null
+  sc: git
+  workspace_type: Application

@@ -122,6 +122,9 @@ if($color2 === null){
     if($pmax1 !== null){
         $select_str .= ' ic.P <= :pmax1 AND ';
     }
+    
+    $select_str .= ' ic.R <= 75 AND ';
+    
 }else{
     // TWO COLORS
     if($pmin1 !== null){
