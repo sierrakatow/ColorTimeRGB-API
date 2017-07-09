@@ -125,14 +125,13 @@ if($color2 === null){
     }
     
     $top_red=min(':R1'+$color_threshold,255);
-    $bottom_red=max(0,':R1'-$color_threshold);
+    $bot_red=max(0,':R1'-$color_threshold);
     $select_str .= ' ic.R <= '.$top_red.' AND ';
-    $select_str .= ' ic.R >= '.$bottom_red.' AND ';
+    $select_str .= ' ic.R >= '.$bot_red.' AND ';
     
-    $top_green=min(':G1'+$color_threshold,255);
-    $bottom_green=max(0,':G1'-$color_threshold);
-    $select_str .= ' ic.G <= (:G1+'.$top_green.') AND ';
-  //  $select_str .= ' ic.G >= '.$bottom_green.' AND ';
+
+    $select_str .= ' ic.G <= (:G1+'.$color_threshold.') AND ';
+    $select_str .= ' ic.G >= (:G1-'.$color_threshold.') AND ';
     
   //  $top_blue=min(':B1'+$color_threshold,255);
    // $bottom_blue=max(0,':B1'-$color_threshold);
