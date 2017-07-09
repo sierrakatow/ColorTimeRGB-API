@@ -131,7 +131,7 @@ if($color2 === null){
     
     $top_green=min(':G1'+$color_threshold,255);
     $bottom_green=max(0,':G1'-$color_threshold);
-    $select_str .= ' ic.G <= '.$top_green.' AND ';
+    $select_str .= ' ic.G <= (:G1+'.$top_green.') AND ';
   //  $select_str .= ' ic.G >= '.$bottom_green.' AND ';
     
   //  $top_blue=min(':B1'+$color_threshold,255);
