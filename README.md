@@ -1,7 +1,7 @@
 **ColorTimeRGB API**
 ----
 
-* **URL**
+* **URL:**
 
   ``/request.php?``
 
@@ -9,7 +9,7 @@
 
   `GET`
   
-*  **URL Params**
+*  **URL Params:**
  
    `color1=[R],[G],[B],[P]` OR `colorscheme=[pastel|rainbow|american|fire|grayscale|earth]`
 
