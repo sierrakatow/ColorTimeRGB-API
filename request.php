@@ -188,7 +188,7 @@ if($limit !== null) $select_str .= ' LIMIT :lim'; // ADD LIMIT TO QRY
 if($offset !== null) $select_str .= ' OFFSET :offset'; // ADD OFFSET TO QRY
 
 
-print $select_str;
+// print $select_str;
 
 $select = $pdo->prepare($select_str);
 
