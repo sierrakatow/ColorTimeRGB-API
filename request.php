@@ -116,7 +116,7 @@ if($category !== null) {
 
 if($major == 1) $color_threshold = 5;
 if($major == 2) $color_threshold = 50;
-if($major == 1) $color_threshold2 = 10;
+if($major == 1) $color_threshold2 = 15;
 if($major == 2) $color_threshold2 = 60;
 
 // FILTER BY PERCENTAGE(S)
@@ -286,7 +286,6 @@ try{
         'limit' => $limit,
         'offset' => $offset,
         'time_elapsed' => $time_elapsed,
-        'top_green' => $top_green,
         'self' => 'http://'.$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI]
     ),
     'data' => $result);
