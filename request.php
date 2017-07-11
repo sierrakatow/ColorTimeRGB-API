@@ -70,24 +70,24 @@ if($color1 !== null){
     FROM items';
 }
 
-// SINGLE COLOR QUERY
-// if($color1 !== null){
-//     if($color2 === null) {
-//         Single Color
-//         $select_str .= ', SQRT('.$r_coeff.'*POW(ic.R-:R1, 2) + 
-//                                 '.$g_coeff.'*POW(ic.G-:G1, 2) + 
-//                                 '.$b_coeff.'*POW(ic.B-:B1, 2))
-//                         AS `distance`';
-//     }else{
-//         Double Color
-//         $select_str .= ', SQRT(POW(SQRT('.$r_coeff.'*POW(ic.R1-:R1, 2) + 
-//                                 '.$g_coeff.'*POW(ic.G1-:G1, 2) + 
-//                                 '.$b_coeff.'*POW(ic.B1-:B1, 2)), 2) +
-//                             POW(SQRT('.$r_coeff.'*POW(ic.R2-:R2, 2) + 
-//                                 '.$g_coeff.'*POW(ic.G2-:G2, 2) + 
-//                                 '.$b_coeff.'*POW(ic.B2-:B2, 2)), 2)) AS `distance`';
-//     }
-// }
+//SINGLE COLOR QUERY
+if($color1 !== null){
+    if($color2 === null) {
+        Single Color
+        $select_str .= ', SQRT('.$r_coeff.'*POW(ic.R-:R1, 2) + 
+                                '.$g_coeff.'*POW(ic.G-:G1, 2) + 
+                                '.$b_coeff.'*POW(ic.B-:B1, 2))
+                        AS `distance`';
+    }else{
+   //     Double Color
+        $select_str .= ', SQRT(POW(SQRT('.$r_coeff.'*POW(ic.R1-:R1, 2) + 
+                                '.$g_coeff.'*POW(ic.G1-:G1, 2) + 
+                                '.$b_coeff.'*POW(ic.B1-:B1, 2)), 2) +
+                            POW(SQRT('.$r_coeff.'*POW(ic.R2-:R2, 2) + 
+                                '.$g_coeff.'*POW(ic.G2-:G2, 2) + 
+                                '.$b_coeff.'*POW(ic.B2-:B2, 2)), 2)) AS `distance`';
+    }
+}
 
 // FROM TABLE
 if($color1 !== null) {
@@ -114,6 +114,8 @@ if($category !== null) {
     else $select_str .= ' items.category_id = :category AND ';
 }
 
+
+//Major defines the individual color threshold to cut back on time
 if($major == 1) $color_threshold = 6;
 if($major == 2) $color_threshold = 50;
 if($major == 1) $color_threshold2 = 20;
@@ -157,26 +159,28 @@ if($color1 !== null){
             $select_str .= ' ic.P2 <= :pmax2 AND ';
         }
         
-        $select_str .= ' ic.R1 <= (:R1+'.$color_threshold2.') AND ';
-        $select_str .= ' ic.R1 >= (:R1-'.$color_threshold2.') AND ';
         
-
-        $select_str .= ' ic.G1 <= (:G1+'.$color_threshold2.') AND ';
-        $select_str .= ' ic.G1 >= (:G1-'.$color_threshold2.') AND ';
-        
-        $select_str .= ' ic.B1 <= (:B1+'.$color_threshold2.') AND ';
-        $select_str .= ' ic.B1 >= (:B1-'.$color_threshold2.') AND ';
-        
-        
-        $select_str .= ' ic.R2 <= (:R2+'.$color_threshold2.') AND ';
-        $select_str .= ' ic.R2 >= (:R2-'.$color_threshold2.') AND ';
-        
-
-        $select_str .= ' ic.G2 <= (:G2+'.$color_threshold2.') AND ';
-        $select_str .= ' ic.G2 >= (:G2-'.$color_threshold2.') AND ';
-        
-        $select_str .= ' ic.B2 <= (:B2+'.$color_threshold2.') AND ';
-        $select_str .= ' ic.B2 >= (:B2-'.$color_threshold2.') AND ';
+        //THIS APPEARS NOT TO BE WORKING RIGHT NOW - UNSURE IF IT IS THE CODE HERE OR SOMETHING ELSE
+//         $select_str .= ' ic.R1 <= (:R1+'.$color_threshold2.') AND ';
+//         $select_str .= ' ic.R1 >= (:R1-'.$color_threshold2.') AND ';
+//         
+// 
+//         $select_str .= ' ic.G1 <= (:G1+'.$color_threshold2.') AND ';
+//         $select_str .= ' ic.G1 >= (:G1-'.$color_threshold2.') AND ';
+//         
+//         $select_str .= ' ic.B1 <= (:B1+'.$color_threshold2.') AND ';
+//         $select_str .= ' ic.B1 >= (:B1-'.$color_threshold2.') AND ';
+//         
+//         
+//         $select_str .= ' ic.R2 <= (:R2+'.$color_threshold2.') AND ';
+//         $select_str .= ' ic.R2 >= (:R2-'.$color_threshold2.') AND ';
+//         
+// 
+//         $select_str .= ' ic.G2 <= (:G2+'.$color_threshold2.') AND ';
+//         $select_str .= ' ic.G2 >= (:G2-'.$color_threshold2.') AND ';
+//         
+//         $select_str .= ' ic.B2 <= (:B2+'.$color_threshold2.') AND ';
+//         $select_str .= ' ic.B2 >= (:B2-'.$color_threshold2.') AND ';
         
         
     }
@@ -193,10 +197,10 @@ if($pattern !== null){
 
 if($where !== null) $select_str .= '\'1\' = \'1\''; // Neutralizes 'AND's
 
-// HAVING THRESHOLD (COLOR DISTANCE)
-// if($color1 !== null) {
-//     $select_str .= ' HAVING distance < :threshold ';
-// }
+HAVING THRESHOLD (COLOR DISTANCE)
+if($color1 !== null) {
+    $select_str .= ' HAVING distance < :threshold ';
+}
 
 // ORDER WITH COLOR CLUSTERS
 if($color1 !== null){
