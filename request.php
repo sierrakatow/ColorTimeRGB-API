@@ -197,7 +197,7 @@ if($pattern !== null){
 
 if($where !== null) $select_str .= '\'1\' = \'1\''; // Neutralizes 'AND's
 
-HAVING THRESHOLD (COLOR DISTANCE)
+//HAVING THRESHOLD (COLOR DISTANCE)
 if($color1 !== null) {
     $select_str .= ' HAVING distance < :threshold ';
 }
