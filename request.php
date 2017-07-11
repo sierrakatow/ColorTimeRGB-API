@@ -114,40 +114,42 @@ if($category !== null) {
 $color_threshold = 50;
 
 // FILTER BY PERCENTAGE(S)
-if($color2 === null){
-    // SINGLE COLOR
-    if($pmin1 !== null){
-        $select_str .= ' ic.P >= :pmin1 AND ';
-    }
+if($color1 !== null){
+    if($color2 === null){
+        // SINGLE COLOR
+        if($pmin1 !== null){
+            $select_str .= ' ic.P >= :pmin1 AND ';
+        }
 
-    if($pmax1 !== null){
-        $select_str .= ' ic.P <= :pmax1 AND ';
-    }
-    
- 
-    $select_str .= ' ic.R <= (:R1+'.$color_threshold.') AND ';
-    $select_str .= ' ic.R >= (:R1-'.$color_threshold.') AND ';
-    
+        if($pmax1 !== null){
+            $select_str .= ' ic.P <= :pmax1 AND ';
+        }
+        
+     
+        $select_str .= ' ic.R <= (:R1+'.$color_threshold.') AND ';
+        $select_str .= ' ic.R >= (:R1-'.$color_threshold.') AND ';
+        
 
-    $select_str .= ' ic.G <= (:G1+'.$color_threshold.') AND ';
-    $select_str .= ' ic.G >= (:G1-'.$color_threshold.') AND ';
-    
-    $select_str .= ' ic.B <= (:B1+'.$color_threshold.') AND ';
-    $select_str .= ' ic.B >= (:B1-'.$color_threshold.') AND ';
-    
-    
-}else{
-    // TWO COLORS
-    if($pmin1 !== null){
-        $select_str .= ' ic.P1 >= :pmin1 AND ';
-    }elseif($pmax1 !== null){
-        $select_str .= ' ic.P1 <= :pmax1 AND ';
-    }
+        $select_str .= ' ic.G <= (:G1+'.$color_threshold.') AND ';
+        $select_str .= ' ic.G >= (:G1-'.$color_threshold.') AND ';
+        
+        $select_str .= ' ic.B <= (:B1+'.$color_threshold.') AND ';
+        $select_str .= ' ic.B >= (:B1-'.$color_threshold.') AND ';
+        
+        
+    }else{
+        // TWO COLORS
+        if($pmin1 !== null){
+            $select_str .= ' ic.P1 >= :pmin1 AND ';
+        }elseif($pmax1 !== null){
+            $select_str .= ' ic.P1 <= :pmax1 AND ';
+        }
 
-    if($pmin2 !== null){
-        $select_str .= ' ic.P2 >= :pmin2 AND ';
-    }elseif($pmax2 !== null){
-        $select_str .= ' ic.P2 <= :pmax2 AND ';
+        if($pmin2 !== null){
+            $select_str .= ' ic.P2 >= :pmin2 AND ';
+        }elseif($pmax2 !== null){
+            $select_str .= ' ic.P2 <= :pmax2 AND ';
+        }
     }
 }
 
@@ -185,6 +187,8 @@ if($color1 !== null){
 if($limit !== null) $select_str .= ' LIMIT :lim'; // ADD LIMIT TO QRY
 if($offset !== null) $select_str .= ' OFFSET :offset'; // ADD OFFSET TO QRY
 
+
+print $select_str;
 
 $select = $pdo->prepare($select_str);
 
