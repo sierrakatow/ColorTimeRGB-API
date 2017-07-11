@@ -73,7 +73,7 @@ if($color1 !== null){
 //SINGLE COLOR QUERY
 if($color1 !== null){
     if($color2 === null) {
-        Single Color
+     //   Single Color
         $select_str .= ', SQRT('.$r_coeff.'*POW(ic.R-:R1, 2) + 
                                 '.$g_coeff.'*POW(ic.G-:G1, 2) + 
                                 '.$b_coeff.'*POW(ic.B-:B1, 2))
