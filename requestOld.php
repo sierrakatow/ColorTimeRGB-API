@@ -71,23 +71,23 @@ if($color1 !== null){
 }
 
 // SINGLE COLOR QUERY
-// if($color1 !== null){
-//     if($color2 === null) {
-//         Single Color
-//         $select_str .= ', SQRT('.$r_coeff.'*POW(ic.R-:R1, 2) + 
-//                                 '.$g_coeff.'*POW(ic.G-:G1, 2) + 
-//                                 '.$b_coeff.'*POW(ic.B-:B1, 2))
-//                         AS `distance`';
-//     }else{
-//         Double Color
-//         $select_str .= ', SQRT(POW(SQRT('.$r_coeff.'*POW(ic.R1-:R1, 2) + 
-//                                 '.$g_coeff.'*POW(ic.G1-:G1, 2) + 
-//                                 '.$b_coeff.'*POW(ic.B1-:B1, 2)), 2) +
-//                             POW(SQRT('.$r_coeff.'*POW(ic.R2-:R2, 2) + 
-//                                 '.$g_coeff.'*POW(ic.G2-:G2, 2) + 
-//                                 '.$b_coeff.'*POW(ic.B2-:B2, 2)), 2)) AS `distance`';
-//     }
-// }
+if($color1 !== null){
+    if($color2 === null) {
+        // Single Color
+        $select_str .= ', SQRT('.$r_coeff.'*POW(ic.R-:R1, 2) + 
+                                '.$g_coeff.'*POW(ic.G-:G1, 2) + 
+                                '.$b_coeff.'*POW(ic.B-:B1, 2))
+                        AS `distance`';
+    }else{
+        // Double Color
+        $select_str .= ', SQRT(POW(SQRT('.$r_coeff.'*POW(ic.R1-:R1, 2) + 
+                                '.$g_coeff.'*POW(ic.G1-:G1, 2) + 
+                                '.$b_coeff.'*POW(ic.B1-:B1, 2)), 2) +
+                            POW(SQRT('.$r_coeff.'*POW(ic.R2-:R2, 2) + 
+                                '.$g_coeff.'*POW(ic.G2-:G2, 2) + 
+                                '.$b_coeff.'*POW(ic.B2-:B2, 2)), 2)) AS `distance`';
+    }
+}
 
 // FROM TABLE
 if($color1 !== null) {
@@ -194,17 +194,16 @@ if($pattern !== null){
 if($where !== null) $select_str .= '\'1\' = \'1\''; // Neutralizes 'AND's
 
 // HAVING THRESHOLD (COLOR DISTANCE)
-// if($color1 !== null) {
-//     $select_str .= ' HAVING distance < :threshold ';
-// }
+if($color1 !== null) {
+    $select_str .= ' HAVING distance < :threshold ';
+}
 
 // ORDER WITH COLOR CLUSTERS
 if($color1 !== null){
     $double_color_percent = ($color2 === null) ? '' : '1';
-  //  $select_str .= ' ORDER BY distance, ic.P'.$double_color_percent.' DESC'; 
+    $select_str .= ' ORDER BY distance, ic.P'.$double_color_percent.' DESC'; 
     if($pattern !== null) $select_str .= ', items.'.$pattern.' DESC';
-    $select_str .= ' ORDER BY items.id DESC';
- //   $select_str .= ', items.id'; 
+    $select_str .= ', items.id'; 
 }else{
     $select_str .= ' ORDER BY ';
     if($colorscheme !== null) $select_str .= $colorscheme.' DESC,';
