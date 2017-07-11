@@ -53,9 +53,13 @@ if($_GET['color1'] !== null) {
 $category = ($_GET['category'] === null) ? null : intval($_GET['category']);
 $pattern = ($_GET['pattern'] === null) ? null : strtolower($_GET['pattern']);
 
+//This is the attempt number on the global scale
+$major = ($_GET['major'] === null) ? null : intval($_GET['major']);
+
+
 if($pattern == 'dotted' || $pattern == 'stripes') $threshold = 150; // loosen threshold
 
-$limit = ($_GET['limit'] === null) ? 1000 : intval($_GET['limit']); // DEFINE LIMIT
+$limit = ($_GET['limit'] === null) ? 100 : intval($_GET['limit']); // DEFINE LIMIT
 $offset = ($_GET['offset'] === null) ? null : intval($_GET['offset']); // DEFINE OFFSET
 
 
@@ -110,8 +114,9 @@ if($category !== null) {
     else $select_str .= ' items.category_id = :category AND ';
 }
 
+if($major == 1) $color_threshold = 5;
+if($major == 2) $color_threshold = 50;
 
-$color_threshold = 50;
 
 // FILTER BY PERCENTAGE(S)
 if($color1 !== null){
