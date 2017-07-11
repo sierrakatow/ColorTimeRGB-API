@@ -116,7 +116,8 @@ if($category !== null) {
 
 if($major == 1) $color_threshold = 5;
 if($major == 2) $color_threshold = 50;
-
+if($major == 1) $color_threshold2 = 10;
+if($major == 2) $color_threshold2 = 60;
 
 // FILTER BY PERCENTAGE(S)
 if($color1 !== null){
@@ -155,6 +156,29 @@ if($color1 !== null){
         }elseif($pmax2 !== null){
             $select_str .= ' ic.P2 <= :pmax2 AND ';
         }
+        
+        $select_str .= ' ic.R1 <= (:R1+'.$color_threshold2.') AND ';
+        $select_str .= ' ic.R1 >= (:R1-'.$color_threshold2.') AND ';
+        
+
+        $select_str .= ' ic.G1 <= (:G1+'.$color_threshold2.') AND ';
+        $select_str .= ' ic.G1 >= (:G1-'.$color_threshold2.') AND ';
+        
+        $select_str .= ' ic.B1 <= (:B1+'.$color_threshold2.') AND ';
+        $select_str .= ' ic.B1 >= (:B1-'.$color_threshold2.') AND ';
+        
+        
+        $select_str .= ' ic.R2 <= (:R1+'.$color_threshold2.') AND ';
+        $select_str .= ' ic.R2 >= (:R1-'.$color_threshold2.') AND ';
+        
+
+        $select_str .= ' ic.G2 <= (:G1+'.$color_threshold2.') AND ';
+        $select_str .= ' ic.G2 >= (:G1-'.$color_threshold2.') AND ';
+        
+        $select_str .= ' ic.B2 <= (:B1+'.$color_threshold2.') AND ';
+        $select_str .= ' ic.B2 >= (:B1-'.$color_threshold2.') AND ';
+        
+        
     }
 }
 
