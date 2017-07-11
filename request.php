@@ -52,6 +52,7 @@ if($_GET['color1'] !== null) {
 }
 $category = ($_GET['category'] === null) ? null : intval($_GET['category']);
 $pattern = ($_GET['pattern'] === null) ? null : strtolower($_GET['pattern']);
+$major = ($_GET['major'] === null) ? null : strtolower($_GET['major']);
 
 if($pattern == 'dotted' || $pattern == 'stripes') $threshold = 150; // loosen threshold
 
@@ -110,8 +111,12 @@ if($category !== null) {
     else $select_str .= ' items.category_id = :category AND ';
 }
 
+//this is the individual color cut off
+if($major == 1) $color_threshold = 10;
+if($major == 1) $color_threshold2 = 15;
+if($major == 2) $color_threshold = 50;
+if($major == 2) $color_threshold2 = 60;
 
-$color_threshold = 50;
 
 // FILTER BY PERCENTAGE(S)
 if($color2 === null){
@@ -125,6 +130,7 @@ if($color2 === null){
     }
     
  
+ 	//these set the individual color cut off
     $select_str .= ' ic.R <= (:R1+'.$color_threshold.') AND ';
     $select_str .= ' ic.R >= (:R1-'.$color_threshold.') AND ';
     
@@ -149,6 +155,29 @@ if($color2 === null){
     }elseif($pmax2 !== null){
         $select_str .= ' ic.P2 <= :pmax2 AND ';
     }
+    
+    //these set the individual color cut off
+    $select_str .= ' ic.R1 <= (:R1+'.$color_threshold2.') AND ';
+    $select_str .= ' ic.R1 >= (:R1-'.$color_threshold2.') AND ';
+    
+
+    $select_str .= ' ic.G1 <= (:G1+'.$color_threshold2.') AND ';
+    $select_str .= ' ic.G1 >= (:G1-'.$color_threshold2.') AND ';
+    
+    $select_str .= ' ic.B1 <= (:B1+'.$color_threshold2.') AND ';
+    $select_str .= ' ic.B1 >= (:B1-'.$color_threshold2.') AND ';
+    
+    
+    $select_str .= ' ic.R2 <= (:R1+'.$color_threshold2.') AND ';
+    $select_str .= ' ic.R2 >= (:R1-'.$color_threshold2.') AND ';
+    
+
+    $select_str .= ' ic.G2 <= (:G1+'.$color_threshold2.') AND ';
+    $select_str .= ' ic.G2 >= (:G1-'.$color_threshold2.') AND ';
+    
+    $select_str .= ' ic.B2 <= (:B1+'.$color_threshold2.') AND ';
+    $select_str .= ' ic.B2 >= (:B1-'.$color_threshold2.') AND ';
+    
 }
 
 if($colorscheme !== null){
