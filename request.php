@@ -205,10 +205,9 @@ if($color1 !== null) {
 // ORDER WITH COLOR CLUSTERS
 if($color1 !== null){
     $double_color_percent = ($color2 === null) ? '' : '1';
-  //  $select_str .= ' ORDER BY distance, ic.P'.$double_color_percent.' DESC'; 
+    $select_str .= ' ORDER BY distance, ic.P'.$double_color_percent.' DESC'; 
     if($pattern !== null) $select_str .= ', items.'.$pattern.' DESC';
-    $select_str .= ' ORDER BY items.id DESC';
- //   $select_str .= ', items.id'; 
+    $select_str .= ', items.id'; 
 }else{
     $select_str .= ' ORDER BY ';
     if($colorscheme !== null) $select_str .= $colorscheme.' DESC,';
