@@ -25,16 +25,6 @@ try{
                             \PDO::ATTR_PERSISTENT => false
                         )
                     );
- 
-    // $handle = $pdo->prepare('SELECT * FROM items LIMIT 20');
- 
-    // $handle->execute();
- 
-    // $result = $handle->fetchAll(\PDO::FETCH_OBJ);
- 
-    // foreach($result as $row){
-    //     print($row->link);
-    // }
 }
 catch(\PDOException $ex){
     print($ex->getMessage());
