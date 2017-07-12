@@ -11,13 +11,8 @@ $password = getenv('MYSQL_PASSWORD');
 $db = getenv('MYSQL_DATABASE');
 $port = getenv('MYSQL_PORT');
 
-
-// $conn = mysqli_connect($host, $user, $password, $db, $port) or die(mysql_error());
-// mysql_query("SELECT * FROM patterns;")or die(mysql_error());
-
-
 try{
-    $pdo = new \PDO(   'mysql:host='.$host.';port='.$port.';dbname='.$db.';charset=utf8mb4',
+    $pdo = new \PDO('mysql:host='.$host.';port='.$port.';dbname='.$db.';charset=utf8mb4',
                         $user,
                         $password,
                         array(
