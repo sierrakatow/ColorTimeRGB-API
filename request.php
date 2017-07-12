@@ -43,7 +43,11 @@ if($_GET['color1'] !== null) {
     $pmin1 = ($_GET['pmin1'] === null) ? null : intval($_GET['pmin1']);
     $pmax1 = ($_GET['pmax1'] === null) ? null : intval($_GET['pmax1']);
 
+    $color_threshold = ($_GET['threshold'] === null) ? $single_color_threshold : intval($_GET['threshold']); 
+
     if($_GET['color2'] !== null){
+        $color_threshold = ($_GET['threshold'] === null) ? $double_color_threshold : intval($_GET['threshold']); 
+
         $color2 = explode(',', $_GET['color2']);
         // get integer from color cluster GET var
         foreach($color2 as $j => $c){
@@ -55,6 +59,8 @@ if($_GET['color1'] !== null) {
         $pmin2 = ($_GET['pmin2'] === null) ? null : intval($_GET['pmin2']);
         $pmax2 = ($_GET['pmax2'] === null) ? null : intval($_GET['pmax2']);
     }
+
+    
     
 }elseif($_GET['colorscheme'] !== null){
     $colorscheme = strtolower($_GET['colorscheme']);
@@ -187,18 +193,18 @@ if($offset !== null) $select_str .= ' OFFSET :offset'; // ADD OFFSET TO QRY
 
 
 // SET NEXT & LAST LINKS
-if($limit !== null) {
-    if($offset === null) {
-        $next = ($_GET['limit'] === null) ? 
-            $_SERVER[REQUEST_URI].'&limit='.$limit.'&offset='.$limit : 
-            preg_replace('/limit=[0-9]+/', 'limit='.$limit.'&offset='.$limit, $_SERVER[REQUEST_URI]);
-    } else {
-        $lim_offset_diff = $offset - $limit;
-        if($lim_offset_diff == 0) $last = preg_replace('/&offset=[0-9]+/', '', $_SERVER[REQUEST_URI]);
-        if ($lim_offset_diff > 0) $last = preg_replace('/offset=[0-9]+/', 'offset='.($offset-$limit), $_SERVER[REQUEST_URI]);
-        $next = preg_replace('/offset=[0-9]+/', 'offset='.($offset+$limit), $_SERVER[REQUEST_URI]);
-    }
+
+if($offset === null) {
+    $next = ($_GET['limit'] === null) ? 
+        $_SERVER[REQUEST_URI].'&limit='.$limit.'&offset='.$limit : 
+        preg_replace('/limit=[0-9]+/', 'limit='.$limit.'&offset='.$limit, $_SERVER[REQUEST_URI]);
+} else {
+    $lim_offset_diff = $offset - $limit;
+    if($lim_offset_diff == 0) $last = preg_replace('/&offset=[0-9]+/', '', $_SERVER[REQUEST_URI]);
+    if ($lim_offset_diff > 0) $last = preg_replace('/offset=[0-9]+/', 'offset='.($offset-$limit), $_SERVER[REQUEST_URI]);
+    $next = preg_replace('/offset=[0-9]+/', 'offset='.($offset+$limit), $_SERVER[REQUEST_URI]);
 }
+
 
 
 
@@ -209,11 +215,9 @@ $select = $pdo->prepare($select_str);
 do{
     // BIND PARAMS
     if($color1 !== null){
-        $color_threshold = $single_color_threshold;
         
         if($color2 !== null) {
             // Double Color
-            $color_threshold = $double_color_threshold;
 
             $select->bindParam(':R2_min', $a=$color2[0]-$color_threshold, PDO::PARAM_INT);
             $select->bindParam(':G2_min', $a=$color2[1]-$color_threshold, PDO::PARAM_INT);
@@ -272,22 +276,29 @@ do{
                 'count' => sizeof($result),
                 'limit' => $limit,
                 'offset' => $offset,
-                'color-threshold' => $color_threshold,
-                'time_elapsed' => $time_elapsed,
-                'self' => 'http://'.$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI]
+                'time_elapsed' => $time_elapsed
             ),
             'data' => $result);
 
+            if($color_threshold !== null) {
+                if($_GET['threshold'] === null){
+                    if($next !== null) $next .= '&threshold='.$color_threshold;
+                    if($last !== null) $last .= '&threshold='.$color_threshold;
+                }
+                $output['meta']['color_threshold'] = $color_threshold;
+            }
+
+            $output['meta']['self'] = 'http://'.$_SERVER[HTTP_HOST].$_SERVER[REQUEST_URI];
             if($next !== null) $output['meta']['next'] = 'http://'.$_SERVER[HTTP_HOST].$next;
             if($last !== null) $output['meta']['last'] = 'http://'.$_SERVER[HTTP_HOST].$last;
+
 
             // FORMAT OUTPUT
             header("HTTP/1.1 200 OK");
             header('Content-Type: application/json');
             print(json_encode($output));
         }else{
-            $single_color_threshold += 15;
-            $double_color_threshold += 40;
+            $color_threshold += ($color2 === null) ? 15 : 40;
         }
 
     }catch(\PDOException $ex){
