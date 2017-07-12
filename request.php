@@ -7,6 +7,8 @@ $max_cluster_count = 4;
 // DEFAULTS
 $default_limit = 100;
 $default_major = 1;
+$min_return_size = 5; // min # of items that are ok to return
+$select_columns = array('item_id', 'link', 'img_url', 'price', 'category_id', 'serial_number');
 
 // Distance Coefficients
 $r_coeff = 2;
@@ -78,13 +80,7 @@ if($pattern == 'dotted' || $pattern == 'stripes') $threshold = 150; // loosen th
 $limit = ($_GET['limit'] === null) ? $default_limit : intval($_GET['limit']); // DEFINE LIMIT
 $offset = ($_GET['offset'] === null) ? null : intval($_GET['offset']); // DEFINE OFFSET
 
-
-if($color1 !== null){
-    $select_str = 'SELECT items.*';
-}else{
-    $select_str = 'SELECT *
-    FROM items';
-}
+$select_str = 'SELECT '.implode(', ', $select_columns);
 
 //CALCULATE DISTANCE FOR MAJOR = 2
 if($color1 !== null && False){
@@ -106,25 +102,14 @@ if($color1 !== null && False){
 }
 
 // FROM TABLE
-if($color1 !== null) {
-    if($color2 === null) {
-        $select_str .= ' FROM items_colors ic';
-    } else {
-        $select_str .= ' FROM items_colors2 ic';
-    }
-}
-
-// JOIN ON ITEMS DETAILS
-if($color1 !== null) $select_str .= ' INNER JOIN items ON items.id = ic.item_id';
+if($color1 === null) $select_str .= ' FROM items';
+else $select_str .= ($color2 === null) ? ' FROM items_colors ic' : ' FROM items_colors2 ic';
 
 // ADD WHERE
 $select_str .= ' WHERE';
 
 // FILTER BY CATEGORY
-if($category !== null) {
-    if($color1 === null) $select_str .= ' category_id = :category AND ';
-    else $select_str .= ' items.category_id = :category AND ';
-}
+if($category !== null) $select_str .= ' category_id = :category AND ';
 
 // FILTER BY PERCENTAGE(S)
 if($color1 !== null){
@@ -133,10 +118,9 @@ if($color1 !== null){
         if($pmin1 !== null) $select_str .= ' ic.P >= :pmin1 AND ';
         elseif($pmax1 !== null) $select_str .= ' ic.P <= :pmax1 AND ';
         
-        $select_str .= ' ic.R BETWEEN :R1_min AND :R1_max AND ';
-        $select_str .= ' ic.G BETWEEN :G1_min AND :G1_max AND ';
-        $select_str .= ' ic.B BETWEEN :B1_min AND :B1_max AND ';
-        
+        $select_str .= ' ic.R BETWEEN :R1_min AND :R1_max AND 
+            ic.G BETWEEN :G1_min AND :G1_max AND
+            ic.B BETWEEN :B1_min AND :B1_max AND ';
         
     }else{
         // TWO COLORS
@@ -146,27 +130,20 @@ if($color1 !== null){
         if($pmin2 !== null) $select_str .= ' ic.P2 >= :pmin2 AND ';
         elseif($pmax2 !== null) $select_str .= ' ic.P2 <= :pmax2 AND ';
         
-        $select_str .= ' ic.R1 BETWEEN :R1_min AND :R1_max AND ';
-        $select_str .= ' ic.G1 BETWEEN :G1_min AND :G1_max AND ';
-        $select_str .= ' ic.B1 BETWEEN :B1_min AND :B1_max AND ';
-
-        $select_str .= ' ic.R2 BETWEEN :R2_min AND :R2_max AND ';
-        $select_str .= ' ic.G2 BETWEEN :G2_min AND :G2_max AND ';
-        $select_str .= ' ic.B2 BETWEEN :B2_min AND :B2_max AND ';
-        
+        $select_str .= ' ic.R1 BETWEEN :R1_min AND :R1_max AND
+            ic.G1 BETWEEN :G1_min AND :G1_max AND
+            ic.B1 BETWEEN :B1_min AND :B1_max AND
+            ic.R2 BETWEEN :R2_min AND :R2_max AND
+            ic.G2 BETWEEN :G2_min AND :G2_max AND
+            ic.B2 BETWEEN :B2_min AND :B2_max AND '; 
     }
 }
 
-if($colorscheme !== null){
-    $select_str .= ' '.$colorscheme.' >= \'1\' AND ';
-}
+if($colorscheme !== null) $select_str .= ' '.$colorscheme.' >= \'1\' AND ';
+if($pattern !== null) $select_str .= ' '.$pattern.' >= \'1\' AND ';
 
-if($pattern !== null){
-    if($color1 === null) $select_str .= ' '.$pattern.' >= \'1\' AND ';
-    else $select_str .= ' items.'.$pattern.' >= \'1\' AND ';
-}
-
-$select_str .= '\'1\' = \'1\''; // Neutralizes 'AND's
+// Neutralizes 'AND's
+$select_str .= '\'1\' = \'1\''; 
 
 //HAVING THRESHOLD (COLOR DISTANCE)
 // if($color1 !== null && $major == 2) {
@@ -177,9 +154,9 @@ $select_str .= '\'1\' = \'1\''; // Neutralizes 'AND's
 if($color1 !== null){
     // $double_color_percent = ($color2 === null) ? '' : '1';
     // $select_str .= ' ORDER BY';
-    if($pattern !== null) $select_str .= ' ORDER BY items.'.$pattern.' DESC';
+    // if($pattern !== null) $select_str .= ' ORDER BY '.$pattern.' DESC';
     // else $select_str .= ' ic.P'.$double_color_percent.' DESC'; 
-}else if($color1 === null){
+}else{
     $select_str .= ' ORDER BY ';
     if($colorscheme !== null) $select_str .= $colorscheme.' DESC';
     if($pattern !== null) {
@@ -211,28 +188,40 @@ if($offset === null) {
 // print $select_str;
 
 $select = $pdo->prepare($select_str);
-
 do{
     // BIND PARAMS
     if($color1 !== null){
         
         if($color2 !== null) {
             // Double Color
+            $R2_min = max($color2[0] - $color_threshold, 0);
+            $R2_max = min($color2[0] + $color_threshold, 255);
+            $G2_min = max($color2[1] - $color_threshold, 0);
+            $G2_max = min($color2[1] + $color_threshold, 255);
+            $B2_min = max($color2[2] - $color_threshold, 0);
+            $B2_max = min($color2[2] + $color_threshold, 255);
 
-            $select->bindParam(':R2_min', $a=$color2[0]-$color_threshold, PDO::PARAM_INT);
-            $select->bindParam(':G2_min', $a=$color2[1]-$color_threshold, PDO::PARAM_INT);
-            $select->bindParam(':B2_min', $a=$color2[2]-$color_threshold, PDO::PARAM_INT);
-            $select->bindParam(':R2_max', $a=$color2[0]+$color_threshold, PDO::PARAM_INT);
-            $select->bindParam(':G2_max', $a=$color2[1]+$color_threshold, PDO::PARAM_INT);
-            $select->bindParam(':B2_max', $a=$color2[2]+$color_threshold, PDO::PARAM_INT);
+            $select->bindParam(':R2_min', $R2_min, PDO::PARAM_INT);
+            $select->bindParam(':R2_max', $R2_max, PDO::PARAM_INT);
+            $select->bindParam(':G2_min', $G2_min, PDO::PARAM_INT);
+            $select->bindParam(':G2_max', $G2_max, PDO::PARAM_INT);
+            $select->bindParam(':B2_min', $B2_min, PDO::PARAM_INT);
+            $select->bindParam(':B2_max', $B2_max, PDO::PARAM_INT);
         }
 
-        $select->bindParam(':R1_min', $a=$color1[0]-$color_threshold, PDO::PARAM_INT);
-        $select->bindParam(':G1_min', $a=$color1[1]-$color_threshold, PDO::PARAM_INT);
-        $select->bindParam(':B1_min', $a=$color1[2]-$color_threshold, PDO::PARAM_INT);
-        $select->bindParam(':R1_max', $a=$color1[0]+$color_threshold, PDO::PARAM_INT);
-        $select->bindParam(':G1_max', $a=$color1[1]+$color_threshold, PDO::PARAM_INT);
-        $select->bindParam(':B1_max', $a=$color1[2]+$color_threshold, PDO::PARAM_INT);
+        $R1_min = max($color1[0] - $color_threshold, 0);
+        $R1_max = min($color1[0] + $color_threshold, 255);
+        $G1_min = max($color1[1] - $color_threshold, 0);
+        $G1_max = min($color1[1] + $color_threshold, 255);
+        $B1_min = max($color1[2] - $color_threshold, 0);
+        $B1_max = min($color1[2] + $color_threshold, 255);
+
+        $select->bindParam(':R1_min', $R1_min, PDO::PARAM_INT);
+        $select->bindParam(':R1_max', $R1_max, PDO::PARAM_INT);
+        $select->bindParam(':G1_min', $G1_min, PDO::PARAM_INT);
+        $select->bindParam(':G1_max', $G1_max, PDO::PARAM_INT);
+        $select->bindParam(':B1_min', $B1_min, PDO::PARAM_INT);
+        $select->bindParam(':B1_max', $B1_max, PDO::PARAM_INT);
     }
 
     // PERCENTAGE
@@ -246,25 +235,26 @@ do{
     if($limit !== null) $select->bindParam(':lim', $limit, PDO::PARAM_INT); // BIND LIMIT VAL
     if($offset !== null) $select->bindParam(':offset', $offset, PDO::PARAM_INT); // BIND OFFSET VAL
 
-
+    $calltimes = array();
     // EXECUTION + DATA RETRIEVAL
     try{
+        
         $select->execute();
         $result = $select->fetchAll(PDO::FETCH_ASSOC);
-
         $count = sizeof($result);
         
-        if($count >= $limit){
+        if($count >= $min_return_size){
             // format color clusters
             foreach($result as $k => $row){
-                $result[$k]['colors'] = array();
-                for($i=1;$i<=$max_cluster_count;$i++){
-                    array_push($result[$k]['colors'], array($row['R'.$i], $row['G'.$i], $row['B'.$i], $row['P'.$i]));
-                    unset($result[$k]['R'.$i]);
-                    unset($result[$k]['G'.$i]);
-                    unset($result[$k]['B'.$i]);
-                    unset($result[$k]['P'.$i]);
-                }
+                // if($pattern !== null) $result[$k][$pattern] = $result
+                // $result[$k]['colors'] = array();
+                // for($i=1;$i<=$max_cluster_count;$i++){
+                //     array_push($result[$k]['colors'], array($row['R'.$i], $row['G'.$i], $row['B'.$i], $row['P'.$i]));
+                //     unset($result[$k]['R'.$i]);
+                //     unset($result[$k]['G'.$i]);
+                //     unset($result[$k]['B'.$i]);
+                //     unset($result[$k]['P'.$i]);
+                // }
             }
 
             $offset = ($offset === null) ? 0 : $offset;
@@ -299,6 +289,7 @@ do{
             print(json_encode($output));
         }else{
             $color_threshold += ($color2 === null) ? 15 : 40;
+            $iter++;
         }
 
     }catch(\PDOException $ex){
@@ -314,6 +305,6 @@ do{
     }
 
 
-}while(sizeof($result) < $limit);
+}while(sizeof($result) < $min_return_size);
 
 ?> 
