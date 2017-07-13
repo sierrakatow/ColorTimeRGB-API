@@ -73,6 +73,8 @@ $pattern = ($_GET['pattern'] === null) ? null : strtolower($_GET['pattern']); //
 $limit = ($_GET['limit'] === null) ? $default_limit : intval($_GET['limit']); // DEFINE LIMIT
 $offset = ($_GET['offset'] === null) ? null : intval($_GET['offset']); // DEFINE OFFSET
 
+$min_return_size = ($_GET['min_return'] === null) ? $min_return_size : intval($_GET['min_return']);
+
 $select_str = 'SELECT '.implode(', ', $select_columns);
 
 // ==== [ DEPRECATED ] ====
@@ -250,6 +252,7 @@ do{
             $output = array('meta' => array(
                 'query' => $select_str,
                 'count' => sizeof($result),
+                'min_return_size' => $min_return_size,
                 'limit' => $limit,
                 'offset' => $offset,
                 'time_elapsed' => $time_elapsed

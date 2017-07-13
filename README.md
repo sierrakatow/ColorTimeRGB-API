@@ -21,6 +21,8 @@
     `pmin2=[0-100]`
     `pmax2=[0-100]`
     `pattern=[dotted|stripes]`
+    `min_return=[0-]`
+    `threshold=[0-255]`
 
 * **Data Params**
 
