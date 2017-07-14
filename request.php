@@ -148,14 +148,14 @@ $select_str .= '\'1\' = \'1\'';
 // }
 
 // ORDER ONLY ON NON-COLOR SEARCHES
-if($color1 === null){
-    $select_str .= ' ORDER BY ';
-    if($colorscheme !== null) $select_str .= $colorscheme.' DESC';
-    if($pattern !== null) {
-        if($colorscheme) $select_str .= ', ';
-        $select_str .= $pattern.' DESC';
-    }
-}
+// if($color1 === null){
+//     $select_str .= ' ORDER BY ';
+//     if($colorscheme !== null) $select_str .= $colorscheme.' DESC';
+//     if($pattern !== null) {
+//         if($colorscheme) $select_str .= ', ';
+//         $select_str .= $pattern.' DESC';
+//     }
+// }
 
 if($limit !== null) $select_str .= ' LIMIT :lim'; // ADD LIMIT TO QRY
 if($offset !== null) $select_str .= ' OFFSET :offset'; // ADD OFFSET TO QRY
