@@ -70,6 +70,7 @@ if($_GET['color1'] !== null) {
 $category = ($_GET['category'] === null) ? null : $_GET['category']; // DEFINE CATEGORY
 $pattern = ($_GET['pattern'] === null) ? null : strtolower($_GET['pattern']); // DEFINE PATTERN
 
+
 $limit = ($_GET['limit'] === null) ? $default_limit : intval($_GET['limit']); // DEFINE LIMIT
 $offset = ($_GET['offset'] === null) ? null : intval($_GET['offset']); // DEFINE OFFSET
 
@@ -173,6 +174,7 @@ if($offset === null) {
     $next = preg_replace('/offset=[0-9]+/', 'offset='.($offset+$limit), $_SERVER[REQUEST_URI]);
 }
 
+if($pattern !== null) $single_color_threshold_increment=15;
 $select = $pdo->prepare($select_str);
 $has_scheme = 0;
 do{
