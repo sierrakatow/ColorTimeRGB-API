@@ -281,7 +281,11 @@ do{
             print(json_encode($output));
         }else{
             $color_threshold += ($color2 === null) ? $single_color_threshold_increment : $double_color_threshold_increment;
-            if($pmax1 !== null) $pmax1=$pmax1-10;
+            if($pmin1 !== null){
+            	if ($pmin1>30){
+             		$pmin1=$pmin1-10;
+             	}
+            }
             $iter++;
         }
 
