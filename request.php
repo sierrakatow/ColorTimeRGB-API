@@ -227,6 +227,7 @@ do{
         
         $select->execute();
         $result = $select->fetchAll(PDO::FETCH_ASSOC);
+        shuffle($result);
         $count = sizeof($result);
         
         if($count >= $min_return_size){
