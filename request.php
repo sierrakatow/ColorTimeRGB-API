@@ -312,6 +312,6 @@ do{
                 'offset' => $offset,
                 'time_elapsed' => $time_elapsed
             ),'data' =>"");
-        print(json_encode("NO RESULTS"));
+        print(json_encode($output));
 	 }
 ?> 
