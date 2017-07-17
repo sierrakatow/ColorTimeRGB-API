@@ -258,6 +258,7 @@ do{
                 'min_return_size' => $min_return_size,
                 'limit' => $limit,
                 'offset' => $offset,
+                'success' => "yes",
                 'time_elapsed' => $time_elapsed
             ),
             'data' => $result);
@@ -315,6 +316,7 @@ do{
                 'min_return_size' => $min_return_size,
                 'limit' => $limit,
                 'offset' => $offset,
+                'success' => "no"
                 'time_elapsed' => $time_elapsed
             ),'data' =>"NOTHING");
         print(json_encode($output));
