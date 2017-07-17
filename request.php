@@ -304,6 +304,14 @@ do{
 	if($colorscheme !== null && sizeof($result)==0){
    		header("HTTP/1.1 200 OK");
         header('Content-Type: application/json');
-        print(json_encode($output));
+         $output = array('meta' => array(
+                'query' => $select_str,
+                'count' => sizeof($result),
+                'min_return_size' => $min_return_size,
+                'limit' => $limit,
+                'offset' => $offset,
+                'time_elapsed' => $time_elapsed
+            ),'data' =>"");
+        print(json_encode("NO RESULTS"));
 	 }
 ?> 
