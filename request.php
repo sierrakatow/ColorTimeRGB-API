@@ -316,7 +316,7 @@ do{
                 'limit' => $limit,
                 'offset' => $offset,
                 'time_elapsed' => $time_elapsed
-            ),'data' =>"");
+            ),'data' =>"NOTHING");
         print(json_encode($output));
 	 }
 ?> 
