@@ -174,7 +174,7 @@ if($offset === null) {
     $next = preg_replace('/offset=[0-9]+/', 'offset='.($offset+$limit), $_SERVER[REQUEST_URI]);
 }
 
-if($pattern !== null) $single_color_threshold_increment=15;
+if($pattern !== null) $single_color_threshold_increment=20;
 $select = $pdo->prepare($select_str);
 $has_scheme = 0;
 do{
