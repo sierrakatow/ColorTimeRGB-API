@@ -302,8 +302,8 @@ do{
 }while(sizeof($result) < $min_return_size && $has_scheme == 0);
 
 	if($colorscheme !== null && sizeof($result)==0){
-		header("HTTP/1.1 200 OK");
+   		header("HTTP/1.1 200 OK");
         header('Content-Type: application/json');
-        print(json_encode("NO RESULTS"));
+        print(json_encode($output));
 	 }
 ?> 
