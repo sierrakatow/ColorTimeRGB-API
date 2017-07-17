@@ -18,7 +18,7 @@ $select_columns = array('item_id', 'link', 'img_url', 'price', 'category_id', 's
 
 // Color Thresholds - Starting Values & Increments
 $single_color_threshold = 6;
-$single_color_threshold_increment = 15;
+$single_color_threshold_increment = 10;
 $double_color_threshold = 20;
 $double_color_threshold_increment = 40;
 
@@ -281,6 +281,7 @@ do{
             print(json_encode($output));
         }else{
             $color_threshold += ($color2 === null) ? $single_color_threshold_increment : $double_color_threshold_increment;
+            if($pmax1 !== null) $pmax1=$pmax1-10;
             $iter++;
         }
 
