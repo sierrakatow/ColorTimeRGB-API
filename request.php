@@ -296,9 +296,7 @@ do{
         exit();
     }
 
-	if($colorscheme !== null){
-		$has_scheme=1
-	}
+	if($colorscheme !== null) $has_scheme=1;
 
 }while(sizeof($result) < $min_return_size && $has_scheme == 0);
 
