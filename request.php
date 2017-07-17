@@ -174,7 +174,7 @@ if($offset === null) {
 }
 
 $select = $pdo->prepare($select_str);
-$has_scheme = 0
+$has_scheme = 0;
 do{
 
     // BIND PARAMS
