@@ -296,13 +296,14 @@ do{
         exit();
     }
 
+	if($colorscheme !== null) $has_scheme=1;
+
+
+}while(sizeof($result) < $min_return_size && $has_scheme == 0);
+
 	if($colorscheme !== null){
-		$has_scheme=1;
 		header("HTTP/1.1 200 OK");
         header('Content-Type: application/json');
         print(json_encode("NO RESULTS"));
 	 }
-
-}while(sizeof($result) < $min_return_size && $has_scheme == 0);
-
 ?> 
