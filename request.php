@@ -174,7 +174,9 @@ if($offset === null) {
 }
 
 $select = $pdo->prepare($select_str);
+$has_scheme = 0
 do{
+
     // BIND PARAMS
     if($color1 !== null){
         
@@ -294,7 +296,10 @@ do{
         exit();
     }
 
+	if($colorscheme !== null){
+		$has_scheme=1
+	}
 
-}while(sizeof($result) < $min_return_size);
+}while(sizeof($result) < $min_return_size && $has_scheme == 0);
 
 ?> 
