@@ -2,7 +2,11 @@
 include('./connection.php');
 
 
-$select_str="INSERT INTO MasterRecords (UserID) VALUES (1031)";
+$UID = $_GET['UID'];
+
+
+
+$select_str='INSERT INTO MasterRecords (UserID) VALUES ('.$UID.')';
 
 
 
