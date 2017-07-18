@@ -2,7 +2,12 @@
 include('./connection.php');
 
 
+$select_str="INSERT INTO MasterRecords (UserID) VALUES (1021)";
 
+
+
+$select = $pdo->prepare($select_str);
+$select->execute();
 
 
 
