@@ -16,7 +16,7 @@ $B2 = $_GET['B2'];
 
 
 
-$select_str='INSERT INTO MasterRecords (UserID,CurTime,NumColors,Scheme,Pattern,R1,G1,B1,R2,G2,B2) VALUES ('.$UID.','.$CTime.','.$NumC.','.$SCEM.','.$Pat.','.$R1.','.$G1.','.$B1.','.$R2.','.$G2.','.$B2.')';
+$select_str='INSERT INTO MasterRecords (UserID,CurTime,NumColors,Scheme,Pattern,R1,G1,B1,R2,G2,B2) VALUES ("'.$UID.'",'.$CTime.','.$NumC.','.$SCEM.','.$Pat.','.$R1.','.$G1.','.$B1.','.$R2.','.$G2.','.$B2.')';
 
 
 
